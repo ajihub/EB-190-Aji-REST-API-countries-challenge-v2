@@ -1,8 +1,10 @@
 import type { NextPage } from 'next'
+import { useState } from 'react';
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/dist/client/link';
-import { RootDiv, IndexDiv, IndexFlexDiv, CardTestDiv, SubDiv, SubPs, HeadPs } from '../styles/styles-index';
+import { SearchFilterDiv, IconDiv, SearchbarDiv, SearchBar, RootDiv, IndexDiv, IndexFlexDiv, CardTestDiv, SubDiv, SubPs, HeadPs } from '../styles/styles-index';
+import { IoSearchOutline } from "react-icons/io5"; 
 
 export const getStaticProps = async () =>{
 
@@ -20,6 +22,9 @@ export const addCommas =(val:number)=>{
 
 
 const Home: NextPage <{allcountries: Array<any>}> = ({allcountries}) => {
+
+  const [searchTerm, setSearchTerm] = useState("")
+
   return (
     <RootDiv>
       <Head>
@@ -28,9 +33,24 @@ const Home: NextPage <{allcountries: Array<any>}> = ({allcountries}) => {
           <link rel="icon" href="/favicon.ico" />
       </Head>
 
+      <SearchFilterDiv>
+          <IconDiv>
+            <IoSearchOutline size={20}/>
+          </IconDiv>
+          <SearchbarDiv>
+            <SearchBar type="text" placeholder="Search for a country..." onChange={e => {setSearchTerm(e.target.value)}}/>
+          </SearchbarDiv>
+      </SearchFilterDiv>
+
       <IndexDiv>
         <IndexFlexDiv>
-            {allcountries.map((allcountries: any, key) =>(
+            {allcountries.filter((val) =>{ //Search Filter
+                if(searchTerm == "0"){
+                  return val
+                }else if (val.name.common.toLowerCase().includes(searchTerm.toLowerCase())){
+                  return val
+                }
+            }).map((allcountries: any, key) =>(
               <Link href={'/country/'+allcountries.name.common} key={allcountries.name.official}>
                 <CardTestDiv key ={key}>
                   <Image src={allcountries.flags.png} alt={allcountries.name.common} width={265} height={161}/>
